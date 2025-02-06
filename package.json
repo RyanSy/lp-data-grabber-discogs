@@ -1,0 +1,23 @@
+{
+  "name": "lp-data-grabber-discogs",
+  "version": "1.0.0",
+  "description": "Gets LP Data from Discogs REST API",
+  "homepage": "https://github.com/RyanSy/lp-data-grabber-discogs#readme",
+  "bugs": {
+    "url": "https://github.com/RyanSy/lp-data-grabber-discogs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanSy/lp-data-grabber-discogs.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
