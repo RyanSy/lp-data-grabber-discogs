@@ -12,7 +12,7 @@ console.log('Waiting for 61 second timer...');
 
 async function main() {
     // perform 60 searches at a time, write data to csv, then delete those elements from the array
-    for (let i = index; i < 60; i++) {
+    for (let i = index; i < index + 60; i++) {
         index++;
 
         const album = await search.searchDiscogs(titles[i]);
