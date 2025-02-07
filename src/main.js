@@ -85,8 +85,18 @@ async function main() {
     const dateTime = `${date}-${time}`;
 
     try {
-        console.log('Writing to .csv file...');
-        writeCSV(`./csv/${dateTime}.csv`, products);
+        if (products.length > 0) {
+            console.log('Writing to products to Shopify .csv template...');
+
+            await writeCSV(`./csv/products-${dateTime}.csv`, products);    
+        }
+        
+        if (rejects.length > 0) {
+            console.log('Writing rejects to .csv file...');
+
+            await writeCSV(`./csv/rejects- ${dateTime}.csv`, rejects);
+        }
+
     } catch (err) {
         console.error('Error writing to .csv file:', err);
     }
