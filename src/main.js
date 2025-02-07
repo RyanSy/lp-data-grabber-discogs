@@ -6,7 +6,7 @@ const products = [];
 
 async function main() {
     // perform 60 searches at a time, write data to csv, then delete those elements from the array
-    for (let i = 0; i < titlesLength; i++) {
+    for (let i = 0; i < 59; i++) {
         const album = await search.searchDiscogs(titles[i]);
         const format = album.format.join();
         const label = album.label.join();
@@ -70,7 +70,7 @@ async function main() {
 
         await products.push(product);
 
-        await titles.splice(0, 59);
+        await titles.splice(0, 60);
     }
 
     const date = new Date().toISOString().split('T')[0];
@@ -85,4 +85,6 @@ async function main() {
     }
 }
 
-setInterval(main, 61000);
+while (titlesLength > 0) {
+    setInterval(main, 61000);
+}
