@@ -7,11 +7,15 @@ const products = [];
 const rejects = [];
 
 let index = 0;
+const start = index + 1;
+const end = index + 60;
 
 console.log('Waiting for 61 second timer...');
 
 async function main() {
     // perform 60 searches at a time, write data to csv, then delete those elements from the array
+    console.log(`searching for titles ${start} to ${end}`);
+    
     for (let i = index; i < index + 60; i++) {
         index++;
 
