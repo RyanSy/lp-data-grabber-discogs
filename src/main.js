@@ -8,15 +8,14 @@ const rejects = [];
 
 // perform 60 searches at a time & write data to csv
 let start = 0
-let end = index + 60;
+let end = 60;
 
 console.log(`searching for titles ${start} to ${end}`);
 
 async function main() {
     for (let i = start; i < end; i++) {
-        start++;
-        end = start + 60;
-        start = end + 1;
+        start = start + 60;
+        end = end + 60;
         const album = await search.searchDiscogs(titles[i]);
         
         if (typeof album !== 'undefined') {
