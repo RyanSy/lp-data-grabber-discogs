@@ -6,13 +6,13 @@ const titles = ['The Rocky Horror Picture Show Original Cast - The Rocky Horror 
 const products = [];
 const rejects = [];
 
-// perform 60 searches at a time & write data to csv
 let start = 0
 
-console.log(`searching for titles ${start + 1} to ${start + 60}`);
-
 async function main() {
+    console.log(`searching for titles ${start + 1} to ${start + 60}`);
+
     let end = start + 60;
+
     for (let i = start; i < end; i++) {
         console.log(i);
         start = start + 60;
