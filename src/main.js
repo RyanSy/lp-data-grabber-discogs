@@ -7,6 +7,7 @@ const products = [];
 const rejects = [];
 
 // perform 60 searches at a time & write data to csv
+let index = 0;
 const start = index + 1;
 const end = index + 60;
 
