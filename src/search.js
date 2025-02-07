@@ -44,19 +44,20 @@ const options = {
 }
  */
 async function searchDiscogs(query) {
-    console.log('Searching Discogs database...');
+    console.log(`Searching Discogs database for ${query}...`);
 
-    const album = await fetch(`${url}/database/search?q=${query}&type=album&key=${consumerKey}&secret=${consumerSecret}`, options)
+    const album = await fetch(`${url}/database/search?q=${query}&type=release&format=vinyl&key=${consumerKey}&secret=${consumerSecret}`, options)
         .then(result => {
-            console.log('Album Data Found!');
             return result.json();
         })
         .then(body => {
             const albumData = body.results[0];
+            console.log(`Album data found for ${albumData.title}`);
+            // console.log(albumData)
             return albumData;
         })
         .catch(err => console.error('Error searching Discogs database:', err));
-
+    
     return album;   
 }
 

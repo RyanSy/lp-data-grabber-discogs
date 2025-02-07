@@ -3,17 +3,15 @@ const titles = require('./inventory');
 const writeCSV = require('write-csv');
 const titlesLength = titles.length;
 const products = [];
-const date = new Date().toISOString();
 
 async function main() {
-// perform 60 searches at a time, write data to csv, then delete those elements from the array
-    for (let i = 0; i < 5; i++) {
+    // perform 60 searches at a time, write data to csv, then delete those elements from the array
+    for (let i = 0; i < 2; i++) {
         const album = await search.searchDiscogs(titles[i]);
-        const year = album.year;
-        const format = album.format;
-        const label = album.label;
-        const genre = album.genre;
-        const style = album.style;
+        const format = album.format.join();
+        const label = album.label.join();
+        const genre = album.genre.join();
+        const style = album.style.join();
         const title = album.title;
         const cover_image = album.cover_image;
         const product = {
@@ -23,7 +21,7 @@ async function main() {
             'Vendor': 'Village Record Club',
             'Product Category': 'Media > Music & Sound Recordings > Records & LPs',
             'Type': 'album',
-            'Tags': `${genre}, ${style}, ${label}, ${year}`,
+            'Tags': `${format}, ${label}, ${genre}, ${style}`,
             'Published': '',
             'Option1 Name': '',
             'Option1 Value': '',
@@ -44,10 +42,10 @@ async function main() {
             'Variant Barcode': '',
             'Image Src': cover_image,
             'Image Position': '',
-            'Image Alt Text': '',
+            'Image Alt Text': title,
             'Gift Card': '',
-            'SEO Title': '',
-            'SEO Description': '',
+            'SEO Title': `${title} | Village Record Club`,
+            'SEO Description': `${title} is available to add to your wishlist.`,
             'Google Shopping / Google Product Category': '',
             'Google Shopping / Gender': '',
             'Google Shopping / Age Group': '',
@@ -70,19 +68,21 @@ async function main() {
             'Status': 'Active'
         };
 
-        products.push(product);
-        try {
-            console.log('Writing to .csv file...');
-            writeCSV(`./csv/${date}.csv`, products);
-        } catch(err) {
-            console.error('Error writing to .csv file:', err);
-        }
-        
-        // await titles.splice(0, 60)
+        await products.push(product);
 
+        // await titles.splice(0, 60);
+    }
+
+    const date = new Date().toISOString().split('T')[0];
+    const time = new Date().toLocaleTimeString('en-US');
+    const dateTime = `${date}-${time}`;
+
+    try {
+        console.log('Writing to .csv file...');
+        writeCSV(`./csv/${dateTime}.csv`, products);
+    } catch (err) {
+        console.error('Error writing to .csv file:', err);
     }
 }
 
-// 
-
-main();
+setInterval(main, 61000);
