@@ -6,17 +6,15 @@ const titles = ['The Rocky Horror Picture Show Original Cast - The Rocky Horror 
 const products = [];
 const rejects = [];
 
-let index = 0;
+// perform 60 searches at a time & write data to csv
 const start = index + 1;
 const end = index + 60;
 
 console.log('Waiting for 61 second timer...');
+console.log(`searching for titles ${start} to ${end}`);
 
 async function main() {
-    // perform 60 searches at a time, write data to csv, then delete those elements from the array
-    console.log(`searching for titles ${start} to ${end}`);
-    
-    for (let i = index; i < index + 60; i++) {
+    for (let i = start; i <= index + 60; i++) {
         index++;
 
         const album = await search.searchDiscogs(titles[i]);
@@ -86,9 +84,7 @@ async function main() {
 
         } else {
             await rejects.push(titles[i]);
-        }
-        
-        await titles.splice(0, 60);
+        }        
     }
 
     const date = new Date().toISOString().split('T')[0];
