@@ -11,7 +11,6 @@ let index = 0;
 let start = index + 1;
 let end = index + 60;
 
-console.log('Waiting for 61 second timer...');
 console.log(`searching for titles ${start} to ${end}`);
 
 async function main() {
@@ -92,7 +91,7 @@ async function main() {
     const date = new Date().toISOString().split('T')[0];
     const time = new Date().toLocaleTimeString('en-US');
     const dateTime = `${date}-${time}`;
-
+    
     try {
         if (products.length > 0) {
             console.log('Writing to products to Shopify .csv template...');
