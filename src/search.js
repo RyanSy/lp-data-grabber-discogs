@@ -44,21 +44,26 @@ const options = {
 }
  */
 async function searchDiscogs(query) {
-    console.log(`Searching Discogs database for ${query}...`);
+    if (typeof query !== 'undefined') {
+        console.log(`Searching Discogs database for ${query}...`);
 
-    const album = await fetch(`${url}/database/search?q=${query}&type=release&format=vinyl&key=${consumerKey}&secret=${consumerSecret}`, options)
-        .then(result => {
-            return result.json();
-        })
-        .then(body => {
-            const albumData = body.results[0];
-            console.log(`Album data found for ${albumData.title}`);
-            // console.log(albumData)
-            return albumData;
-        })
-        .catch(err => console.error('Error searching Discogs database:', err));
-    
-    return album;   
+        const album = await fetch(`${url}/database/search?q=${query}&type=release&format=vinyl&key=${consumerKey}&secret=${consumerSecret}`, options)
+            .then(result => {
+                return result.json();
+            })
+            .then(body => {
+                const albumData = body.results[0];
+                console.log(`Album data found for ${albumData.title}`);
+                // console.log(albumData)
+                return albumData;
+            })
+            .catch(err => console.error('Error searching Discogs database:', err));
+        
+        return album; 
+    } else {
+        console.log('Search query returns undefined...')
+    }
+      
 }
 
 module.exports = { searchDiscogs };
