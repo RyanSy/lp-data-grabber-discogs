@@ -1,8 +1,38 @@
 const albumTitles = require('./albumTitles');
 const search = require('./search');
+const fs = require('fs');
+const path = require('path');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const date = new Date().toISOString().split('T')[0];
+const time = new Date().toLocaleTimeString('en-US');
+const dateTime = `${date}-${time}`;
+const productsCsvFile = `products-${dateTime}.csv`;
+const rejectsTxtFile = `rejects-${dateTime}.txt`;
+
+
+
+// creates a blank file to save data to
+async function createFile(filename, content) {
+    const filePath = path.join(__dirname, `../files/${filename}`); // Use path.join for cross-platform compatibility
+  
+    await fs.writeFile(filePath, content, (err) => {
+      if (err) {
+        console.error("Error creating file:", err);
+        return;
+      }
+      console.log(`File "${filename}" created successfully at ${filePath}`);
+    });
+}
+
+createFile(productsCsvFile, '');
+
+createFile(rejectsTxtFile, '');
+
+
+
+// write products to a csv file
 const csvProductWriter = createCsvWriter({
-    path: './csv/products.csv',
+    path: `./files/${productsCsvFile}`,
     header: [
         {id: 'Handle', title: 'Handle'},
         {id: 'Title', title: 'Title'},
@@ -58,17 +88,26 @@ const csvProductWriter = createCsvWriter({
     ]
 });
 
-const rejectCsvWriter = createCsvWriter({
-    path: './csv/rejects.txt',
+// write products not to a txt file
+const rejectsTxtWriter = createCsvWriter({
+    path: `./files/${rejectsTxtFile}`,
     header: ['title']
 });
+
+
 
 let index = 0;
 
 const albumTitlesLength = albumTitles.length;
 
 async function main() {
-    const album = await search.searchDiscogs(albumTitles[index]);
+    // search Discogs for album info
+    const album = await search.getDiscogsData(albumTitles[index]);
+
+    // search Spotify for cover art
+    const spotifyAccessToken = await search.getSpotifyAccessToken();
+
+    const coverArtUrl = await search.getSpotifyCoverArt(spotifyAccessToken, albumTitles[index]);
     
     if (album !== null) {
         const format = album.format.join();
@@ -76,7 +115,7 @@ async function main() {
         const genre = album.genre.join();
         const style = album.style.join();
         const title = album.title;
-        const cover_image = album.cover_image;
+        const cover_image = coverArtUrl;
         const product = {
             'Handle': title,
             'Title': title,
@@ -131,31 +170,24 @@ async function main() {
             'Status': 'Active'
         };
 
+        // if album info is not null, save product to products csv file
         await csvProductWriter.writeRecords([product])
             .then(async () => {
-                try {
-                    console.log(`Album saved to products.csv.`);
-                    await index++;
-                } catch(err) {
-                    console.error('Error 1 saving album to products.csv:')
-                }
+                console.log(`Album saved to ${productsCsvFile}.`);
+                await index++;
             })
             .catch(err => {
-                console.error(`Error 2 saving album to products.csv:`, err);
+                console.error(`Error saving album to products.csv:`, err);
             });
-                
-        
+    
     } else {
-        await rejectCsvWriter.writeRecords([{title: titles[index]}])
+        // if album info returns null, save title to rejects txt file
+        await rejectsTxtWriter.writeRecords([{title: albumTitles[index]}])
             .then(async () => {
-                try {
-                    console.log('Album saved to rejects.csv.');
-                    await index++;
-                } catch(err) {
-                    console.error('Error 1 saving album to rejects.csv:')
-                }
+                console.log(`Album saved to ${rejectsTxtFile}.`);
+                await index++;
             })
-            .catch(() => {
+            .catch(err => {
                 console.error('Error 2 saving album to rejects.csv:', err);
             })
     }       
@@ -167,5 +199,6 @@ async function main() {
     }
 }
 
+// let's go
 main();
 

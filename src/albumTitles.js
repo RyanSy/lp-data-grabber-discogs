@@ -1,3 +1,3 @@
-const albumTitles = ['gang starr = hard to earn', 'conway - calvin', 'jeru = wrath of math'];
+const albumTitles = ['a tribe called quest - low end theory'];
 
 module.exports = albumTitles;
