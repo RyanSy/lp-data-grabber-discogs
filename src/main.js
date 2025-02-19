@@ -1,4 +1,6 @@
 const albumTitles = require('./albumTitles');
+const albumTitlesLength = albumTitles.length;
+let index = 0;
 const search = require('./search');
 const fs = require('fs');
 const path = require('path');
@@ -13,7 +15,7 @@ const rejectsTxtFile = `rejects-${dateTime}.txt`;
 
 // creates a blank file to save data to
 async function createFile(filename, content) {
-    const filePath = path.join(__dirname, `../files/${filename}`); // Use path.join for cross-platform compatibility
+    const filePath = path.join(__dirname, `../../data-grabber-files/${filename}`); // Use path.join for cross-platform compatibility
   
     await fs.writeFile(filePath, content, (err) => {
       if (err) {
@@ -24,15 +26,11 @@ async function createFile(filename, content) {
     });
 }
 
-createFile(productsCsvFile, '');
-
-createFile(rejectsTxtFile, '');
-
 
 
 // write products to a csv file
 const csvProductWriter = createCsvWriter({
-    path: `./files/${productsCsvFile}`,
+    path: path.join(__dirname, `../../data-grabber-files/${productsCsvFile}`),
     header: [
         {id: 'Handle', title: 'Handle'},
         {id: 'Title', title: 'Title'},
@@ -88,27 +86,25 @@ const csvProductWriter = createCsvWriter({
     ]
 });
 
+
+
 // write products not to a txt file
 const rejectsTxtWriter = createCsvWriter({
-    path: `./files/${rejectsTxtFile}`,
+    path: path.join(__dirname, `../../data-grabber-files/${rejectsTxtFile}`),
     header: ['title']
 });
 
 
-
-let index = 0;
-
-const albumTitlesLength = albumTitles.length;
-
+// main function
 async function main() {
     // search Discogs for album info
-    const album = await search.getDiscogsData(albumTitles[index]);
+    // const album = await search.getDiscogsData(albumTitles[index]);
 
     // search Spotify for cover art
     const spotifyAccessToken = await search.getSpotifyAccessToken();
-
     const coverArtUrl = await search.getSpotifyCoverArt(spotifyAccessToken, albumTitles[index]);
-    
+
+    // if album info is not null, save product to products csv file
     if (album !== null) {
         const format = album.format.join();
         const label = album.label.join();
@@ -170,7 +166,6 @@ async function main() {
             'Status': 'Active'
         };
 
-        // if album info is not null, save product to products csv file
         await csvProductWriter.writeRecords([product])
             .then(async () => {
                 console.log(`Album saved to ${productsCsvFile}.`);
@@ -188,17 +183,21 @@ async function main() {
                 await index++;
             })
             .catch(err => {
-                console.error('Error 2 saving album to rejects.csv:', err);
+                console.error('Error saving album to rejects.txt:', err);
             })
     }       
     
     if (index < albumTitlesLength) {
-        setTimeout(main, 2000);
+        setTimeout(main, 2109);
     } else {
         console.log('Done.');
     }
 }
 
 // let's go
+createFile(productsCsvFile, '');
+
+createFile(rejectsTxtFile, '');
+
 main();
 

@@ -12,21 +12,20 @@ const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 async function getDiscogsData(query) {
     console.log(`Searching Discogs database for ${query}...`);
 
-    let discogsResponseHeaders = {}
-
-    const album = await fetch(`https://api.discogs.com/database/search?q=${query}&type=release&format=vinyl`, {
+    const album = await fetch(`https://api.discogs.com/database/search?q=${query}&type=release&format=vinyl&token=${discogsToken}`, {
         headers: {
-            'User-Agent': 'Vinyl Steve/1.0 (Contact: vinylsteve109@gmail.com)',
-            'Authorization': `Discogs token=${discogsToken}`
+            'User-Agent': 'DJ Swerve 1.2 (Contact: djswerve21@gmail.com)'
         }
     })
         .then(async response => {
-            // check discogs rate limit
-            // const responseHeaders = response.headers;
-            // discogsResponseHeaders['x-discogs-ratelimit'] = await responseHeaders.get('x-discogs-ratelimit');
-            // discogsResponseHeaders['x-discogs-ratelimit-remaining'] = await responseHeaders.get('x-discogs-ratelimit-remaining');
-            // discogsResponseHeaders['x-discogs-ratelimit-used'] = await responseHeaders.get('x-discogs-ratelimit-used');
-            // console.log('Discogs response headers:', discogsResponseHeaders);
+            // to check discogs rate limit, uncomment below
+            console.log(`Response status: ${response.status} - ${response.statusText}`);
+            const responseHeaders = response.headers;
+            let discogsResponseHeaders = {};
+            discogsResponseHeaders['x-discogs-ratelimit'] = await responseHeaders.get('x-discogs-ratelimit');
+            discogsResponseHeaders['x-discogs-ratelimit-remaining'] = await responseHeaders.get('x-discogs-ratelimit-remaining');
+            discogsResponseHeaders['x-discogs-ratelimit-used'] = await responseHeaders.get('x-discogs-ratelimit-used');
+            console.log('Discogs rate limit response headers:', discogsResponseHeaders);
             return response.json();
         })
         .then(body => {
@@ -66,7 +65,7 @@ async function getSpotifyAccessToken() {
         },
     })
         .then(response => {
-            console.log(`Fetch acces token status: ${response.status} - ${response.statusText}`);
+            // console.log(`Fetch access token status: ${response.status} - ${response.statusText}`);
             return response.json(); 
         })
         .then(data => {
@@ -92,7 +91,7 @@ async function getSpotifyCoverArt(access_token, query) {
         headers: { 'Authorization': 'Bearer ' + access_token },
     })
         .then(response => {
-            console.log(`Fetch cover art status: ${response.status} - ${response.statusText}`);
+            // console.log(`Fetch cover art status: ${response.status} - ${response.statusText}`);
             return response.json();
         })
         .then(data => {

@@ -1,3 +1,3 @@
-const albumTitles = ['a tribe called quest - low end theory'];
+const albumTitles = ['pink floyd - dark side of the moon'];
 
 module.exports = albumTitles;
