@@ -86,7 +86,7 @@ async function getSpotifyAccessToken() {
 async function getSpotifyCoverArt(access_token, query) {
     console.log(`Searching for cover art...`);
 
-    const spotifyCoverArt = await fetch(`https://api.spotify.com/v1/search?&q=${query}&type=album&limit=1`, {
+    await fetch(`https://api.spotify.com/v1/search?&q=${query}&type=album&limit=1`, {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + access_token },
     })
@@ -99,13 +99,11 @@ async function getSpotifyCoverArt(access_token, query) {
                 console.log('Cover art successfully retrieved.');
                 return data.albums.items[0].images[0].url;
             } else {
-                console.log('Cover art not found.');
+                console.log('Cover art searchFunctions.');
                 return null;
             }    
         })
         .catch(err => console.error('Error searching for cover art:', err));
-
-    return spotifyCoverArt;
 }
 
 module.exports = { getDiscogsData, getSpotifyAccessToken, getSpotifyCoverArt };

@@ -5,26 +5,29 @@ const search = require('./search');
 const fs = require('fs');
 const path = require('path');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-const date = new Date().toISOString().split('T')[0];
-const time = new Date().toLocaleTimeString('en-US');
-const dateTime = `${date}-${time}`;
-const productsCsvFile = `products-${dateTime}.csv`;
-const rejectsTxtFile = `rejects-${dateTime}.txt`;
+// const date = new Date().toISOString().split('T')[0];
+// const time = new Date().toLocaleTimeString('en-US');
+// const dateTime = `${date}-${time}`;
+// const productsCsvFile = `products-${dateTime}.csv`;
+// const rejectsTxtFile = `rejects-${dateTime}.txt`;
 
+// use existing files to update image urls
+const productsCsvFile = `products-2025-02-19-12:24:42 PM.csv`;
+const rejectsTxtFile = `rejects-2025-02-19-12:24:42 PM.txt`;
 
 
 // creates a blank file to save data to
-async function createFile(filename, content) {
-    const filePath = path.join(__dirname, `../../data-grabber-files/${filename}`); // Use path.join for cross-platform compatibility
+// async function createFile(filename, content) {
+//     const filePath = path.join(__dirname, `../../data-grabber-files/${filename}`); // Use path.join for cross-platform compatibility
   
-    await fs.writeFile(filePath, content, (err) => {
-      if (err) {
-        console.error("Error creating file:", err);
-        return;
-      }
-      console.log(`File "${filename}" created successfully at ${filePath}`);
-    });
-}
+//     await fs.writeFile(filePath, content, (err) => {
+//       if (err) {
+//         console.error("Error creating file:", err);
+//         return;
+//       }
+//       console.log(`File "${filename}" created successfully at ${filePath}`);
+//     });
+// }
 
 
 
@@ -32,57 +35,57 @@ async function createFile(filename, content) {
 const csvProductWriter = createCsvWriter({
     path: path.join(__dirname, `../../data-grabber-files/${productsCsvFile}`),
     header: [
-        {id: 'Handle', title: 'Handle'},
-        {id: 'Title', title: 'Title'},
-        {id: 'Body (HTML)', title: 'Body (HTML)'},
-        {id: 'Vendor', title: 'Vendor'},
-        {id: 'Product Category', title: 'Product Category'},
-        {id: 'Type', title: 'Type'},
-        {id: 'Tags', title: 'Tags'},
-        {id: 'Published', title: 'Published'},
-        {id: 'Option1 Name', title: 'Option1 Name'},
-        {id: 'Option1 Value', title: 'Option1 Value'},
-        {id: 'Option2 Name', title: 'Option2 Name'},
-        {id: 'Option2 Value', title: 'Option2 Value'},
-        {id: 'Option3 Name', title: 'Option3 Name'},
-        {id: 'Option3 Value', title: 'Option3 Value'},
-        {id: 'Variant SKU', title: 'Variant SKU'},
-        {id: 'Variant Grams', title: 'Variant Grams'},
-        {id: 'Variant Inventory Tracker', title: 'Variant Inventory Tracker'},
-        {id: 'Variant Inventory Qty', title: 'Variant Inventory Qty'},
-        {id: 'Variant Inventory Policy', title: 'Variant Inventory Policy'},
-        {id: 'Variant Fulfillment Service', title: 'Variant Fulfillment Service'},
-        {id: 'Variant Price', title: 'Variant Price'},
-        {id: 'Variant Compare At Price', title: 'Variant Compare At Price'},
-        {id: 'Variant Requires Shipping', title: 'Variant Requires Shipping'},
-        {id: 'Variant Taxable', title: 'Variant Taxable'},
-        {id: 'Variant Barcode', title: 'Variant Barcode'},
+    //     {id: 'Handle', title: 'Handle'},
+    //     {id: 'Title', title: 'Title'},
+    //     {id: 'Body (HTML)', title: 'Body (HTML)'},
+    //     {id: 'Vendor', title: 'Vendor'},
+    //     {id: 'Product Category', title: 'Product Category'},
+    //     {id: 'Type', title: 'Type'},
+    //     {id: 'Tags', title: 'Tags'},
+    //     {id: 'Published', title: 'Published'},
+    //     {id: 'Option1 Name', title: 'Option1 Name'},
+    //     {id: 'Option1 Value', title: 'Option1 Value'},
+    //     {id: 'Option2 Name', title: 'Option2 Name'},
+    //     {id: 'Option2 Value', title: 'Option2 Value'},
+    //     {id: 'Option3 Name', title: 'Option3 Name'},
+    //     {id: 'Option3 Value', title: 'Option3 Value'},
+    //     {id: 'Variant SKU', title: 'Variant SKU'},
+    //     {id: 'Variant Grams', title: 'Variant Grams'},
+    //     {id: 'Variant Inventory Tracker', title: 'Variant Inventory Tracker'},
+    //     {id: 'Variant Inventory Qty', title: 'Variant Inventory Qty'},
+    //     {id: 'Variant Inventory Policy', title: 'Variant Inventory Policy'},
+    //     {id: 'Variant Fulfillment Service', title: 'Variant Fulfillment Service'},
+    //     {id: 'Variant Price', title: 'Variant Price'},
+    //     {id: 'Variant Compare At Price', title: 'Variant Compare At Price'},
+    //     {id: 'Variant Requires Shipping', title: 'Variant Requires Shipping'},
+    //     {id: 'Variant Taxable', title: 'Variant Taxable'},
+    //     {id: 'Variant Barcode', title: 'Variant Barcode'},
         {id: 'Image Src', title: 'Image Src'},
-        {id: 'Image Position', title: 'Image Position'},
-        {id: 'Image Alt Text', title: 'Image Alt Text'},
-        {id: 'Gift Card', title: 'Gift Card'},
-        {id: 'SEO Title', title: 'SEO Title'},
-        {id: 'SEO Description', title: 'SEO Description'},
-        {id: 'Google Shopping / Google Product Category', title: 'Google Shopping / Google Product Category'},
-        {id: 'Google Shopping / Gender', title: 'Google Shopping / Gender'},
-        {id: 'Google Shopping / Age Group', title: 'Google Shopping / Age Group'},
-        {id: 'Google Shopping / MPN', title: 'Google Shopping / MPN'},
-        {id: 'Google Shopping / AdWords Grouping', title: 'Google Shopping / AdWords Grouping'},
-        {id: 'Google Shopping / AdWords Labels', title: 'Google Shopping / AdWords Labels'},
-        {id: 'Google Shopping / Condition', title: 'Google Shopping / Condition'},
-        {id: 'Google Shopping / Custom Product', title: 'Google Shopping / Custom Product'},
-        {id: 'Google Shopping / Custom Label 0', title: 'Google Shopping / Custom Label 0'},
-        {id: 'Google Shopping / Custom Label 1', title: 'Google Shopping / Custom Label 1'},
-        {id: 'Google Shopping / Custom Label 2', title: 'Google Shopping / Custom Label 2'},
-        {id: 'Google Shopping / Custom Label 3', title: 'Google Shopping / Custom Label 3'},
-        {id: 'Google Shopping / Custom Label 4', title: 'Google Shopping / Custom Label 4'},
-        {id: 'Variant Image', title: 'Variant Image'},
-        {id: 'Variant Weight Unit', title: 'Variant Weight Unit'},
-        {id: 'Variant Tax Code', title: 'Variant Tax Code'},
-        {id: 'Cost per item', title: 'Cost per item'},
-        {id: 'Price / International', title: 'Price / International'},
-        {id: 'Compare At Price / International', title: 'Compare At Price / International'},
-        {id: 'Status', title: 'Status'}
+    //     {id: 'Image Position', title: 'Image Position'},
+    //     {id: 'Image Alt Text', title: 'Image Alt Text'},
+    //     {id: 'Gift Card', title: 'Gift Card'},
+    //     {id: 'SEO Title', title: 'SEO Title'},
+    //     {id: 'SEO Description', title: 'SEO Description'},
+    //     {id: 'Google Shopping / Google Product Category', title: 'Google Shopping / Google Product Category'},
+    //     {id: 'Google Shopping / Gender', title: 'Google Shopping / Gender'},
+    //     {id: 'Google Shopping / Age Group', title: 'Google Shopping / Age Group'},
+    //     {id: 'Google Shopping / MPN', title: 'Google Shopping / MPN'},
+    //     {id: 'Google Shopping / AdWords Grouping', title: 'Google Shopping / AdWords Grouping'},
+    //     {id: 'Google Shopping / AdWords Labels', title: 'Google Shopping / AdWords Labels'},
+    //     {id: 'Google Shopping / Condition', title: 'Google Shopping / Condition'},
+    //     {id: 'Google Shopping / Custom Product', title: 'Google Shopping / Custom Product'},
+    //     {id: 'Google Shopping / Custom Label 0', title: 'Google Shopping / Custom Label 0'},
+    //     {id: 'Google Shopping / Custom Label 1', title: 'Google Shopping / Custom Label 1'},
+    //     {id: 'Google Shopping / Custom Label 2', title: 'Google Shopping / Custom Label 2'},
+    //     {id: 'Google Shopping / Custom Label 3', title: 'Google Shopping / Custom Label 3'},
+    //     {id: 'Google Shopping / Custom Label 4', title: 'Google Shopping / Custom Label 4'},
+    //     {id: 'Variant Image', title: 'Variant Image'},
+    //     {id: 'Variant Weight Unit', title: 'Variant Weight Unit'},
+    //     {id: 'Variant Tax Code', title: 'Variant Tax Code'},
+    //     {id: 'Cost per item', title: 'Cost per item'},
+    //     {id: 'Price / International', title: 'Price / International'},
+    //     {id: 'Compare At Price / International', title: 'Compare At Price / International'},
+    //     {id: 'Status', title: 'Status'}
     ]
 });
 
@@ -91,7 +94,7 @@ const csvProductWriter = createCsvWriter({
 // write products not to a txt file
 const rejectsTxtWriter = createCsvWriter({
     path: path.join(__dirname, `../../data-grabber-files/${rejectsTxtFile}`),
-    header: ['title']
+    // header: ['title']
 });
 
 
@@ -105,12 +108,15 @@ async function main() {
     const coverArtUrl = await search.getSpotifyCoverArt(spotifyAccessToken, albumTitles[index]);
 
     // if album info is not null, save product to products csv file
-    if (album !== null) {
-        const format = album.format.join();
-        const label = album.label.join();
-        const genre = album.genre.join();
-        const style = album.style.join();
-        const title = album.title;
+    // if (album !== null) {
+    
+    // if coverArtUrl is not null, update url in products csv file
+    if (coverArtUrl !== null) {
+        // const format = album.format.join();
+        // const label = album.label.join();
+        // const genre = album.genre.join();
+        // const style = album.style.join();
+        // const title = album.title;
         const cover_image = coverArtUrl;
         const product = {
             'Handle': title,
@@ -168,15 +174,15 @@ async function main() {
 
         await csvProductWriter.writeRecords([product])
             .then(async () => {
-                console.log(`Album saved to ${productsCsvFile}.`);
+                console.log(`Image src updated in ${productsCsvFile}.`);
                 await index++;
             })
             .catch(err => {
-                console.error(`Error saving album to products.csv:`, err);
+                console.error(`Error updating Image src in ${productsCsvFile}:`, err);
             });
     
     } else {
-        // if album info returns null, save title to rejects txt file
+        // if spotify image search returns null, save title to rejects txt file
         await rejectsTxtWriter.writeRecords([{title: albumTitles[index]}])
             .then(async () => {
                 console.log(`Album saved to ${rejectsTxtFile}.`);
@@ -195,9 +201,9 @@ async function main() {
 }
 
 // let's go
-createFile(productsCsvFile, '');
+// createFile(productsCsvFile, '');
 
-createFile(rejectsTxtFile, '');
+// createFile(rejectsTxtFile, '');
 
 main();
 
