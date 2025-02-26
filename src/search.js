@@ -65,12 +65,13 @@ async function getSpotifyAccessToken() {
         },
     })
         .then(response => {
-            // console.log(`Fetch access token status: ${response.status} - ${response.statusText}`);
+            console.log(`Fetch access token status: ${response.status} - ${response.statusText}`);
             return response.json(); 
         })
         .then(data => {
-            console.log('Access token successfully retrieved.');
-            return data.access_token;
+            const accessToken = data.access_token;
+            console.log(`Access token successfully retrieved: ${accessToken}`);
+            return accessToken;
         })
         .catch(err => console.error('Error getting access token:', err));
 
@@ -84,26 +85,29 @@ async function getSpotifyAccessToken() {
  * @returns JSON object containing album data.
  */
 async function getSpotifyCoverArt(access_token, query) {
-    console.log(`Searching for cover art...`);
+    console.log(`Searching for cover art for "${query}"...`);
 
-    await fetch(`https://api.spotify.com/v1/search?&q=${query}&type=album&limit=1`, {
+    const coverArtUrl = await fetch(`https://api.spotify.com/v1/search?&q=${query}&type=album&limit=1`, {
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + access_token },
     })
         .then(response => {
-            // console.log(`Fetch cover art status: ${response.status} - ${response.statusText}`);
+            console.log(`Fetch cover art status: ${response.status} - ${response.statusText}`);
             return response.json();
         })
         .then(data => {
             if (data.albums) {
-                console.log('Cover art successfully retrieved.');
-                return data.albums.items[0].images[0].url;
+                const coverArt = data.albums.items[0].images[0].url; 
+                console.log(`Cover art successfully retrieved: ${coverArt}`);
+                return coverArt;
             } else {
-                console.log('Cover art searchFunctions.');
+                console.log('Cover art not found.');
                 return null;
             }    
         })
         .catch(err => console.error('Error searching for cover art:', err));
+
+    return coverArtUrl;
 }
 
 module.exports = { getDiscogsData, getSpotifyAccessToken, getSpotifyCoverArt };

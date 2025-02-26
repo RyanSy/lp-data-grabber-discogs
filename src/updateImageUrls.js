@@ -16,10 +16,10 @@ let modifiedCsvJson = [];
 const config = {
   inputFile: './files/products-old.csv',
   outputFile: './files/products-new.csv',
-//   rejectsFile: './files/rejects.txt'
+  rejectsFile: './files/rejects.txt'
 };
 
-const csvWriter = createCsvWriter({
+const productCsvWriter = createCsvWriter({
     path: config.outputFile,
     header: [
         {id: 'Handle', title: 'Handle'},
@@ -76,21 +76,22 @@ const csvWriter = createCsvWriter({
     ]
 });
 
+const rejectsTxtWriter = createCsvWriter({
+  path: config.rejectsFile
+});
+
 /**
  * Initialise script.
  */
 function init() {
     console.log('Initiating...');
-    console.log(`Preparing to parse CSV file... ${config.inputFile}`);
+    console.log(`Preparing to parse CSV file... ${config.inputFile}...`);
   
     fs.createReadStream(config.inputFile)
       .pipe(csv())
       .on('data', (data) => inputCsvJson.push(data))
-      .on('end', () => {
-        modifiedCsvJson = inputCsvJson
-  
-        console.log('...Done');
-  
+      .on('end', async () => {
+        modifiedCsvJson = inputCsvJson;
         initFunctions();
       });
 }
@@ -99,149 +100,49 @@ function init() {
  * Execute functions once data is available.
  */
 function initFunctions() {
-    console.log('Initiating script functionality...');
-    
-    getNewimageUrl();
-
-    /**
-     * Once everything is finished, write to file.
-     */
-    writeDataToFile();
+    console.log('Initiating script...');
+    for (let i = 0; i < albumTitlesLength; i++) {
+      updateImageUrl(albumTitles[i]);
+      if (i === albumTitlesLength) {
+        console.log('Done.');
+      }
+    }
+      /**
+       * consider using 2 second timeout in case of rate limits
+       *     if (index < albumTitlesLength) {
+                  setTimeout(main, 2000);
+              } else {
+                  console.log('Done.');
+              }
+       */
 }
 
 /**
- * Search Spotify API for new image url. 
+ * Search Spotify API for new image url and update product csv file.
  */
-function getNewimageUrl() {
-    console.log('Getting image url from Spotify API...');
+async function updateImageUrl(album) {
+    console.log('Starting getNewImageUrl function...');
 
-    const spotifyAccessToken = search.getSpotifyAccessToken();
-    const coverArtUrl = search.getSpotifyCoverArt(spotifyAccessToken, albumTitles[index]);
+    const spotifyAccessToken = await search.getSpotifyAccessToken();
 
-    modifiedCsvJson = modifiedCsvJson.map((item) => {
+    const coverArtUrl = await search.getSpotifyCoverArt(spotifyAccessToken, album).then(data => data);
+
+    if (!coverArtUrl) {
+      rejectsTxtWriter.writeRecords([{title: albumTitles[index]}])
+    } else {
+      modifiedCsvJson = modifiedCsvJson.map(async (item) => {
         const updatedItem = item;
         const itemKey = 'Image Src';
-
         updatedItem[itemKey] = coverArtUrl;
-
-        return updatedItem;
-    });
-}
-
-/**
- * Write all modified data to its own CSV file.
- */
-function writeDataToFile() {
-    console.log(`Writing data to a file...`);
-  
-    csvWriter.writeRecords(modifiedCsvJson)
-      .then(() => {
-        console.log('The CSV file was written successfully!')
-  
-        console.log('...Finished!');
+        productCsvWriter.writeRecords([updatedItem])
+        .then(() => {
+          console.log('The product CSV file was updated successfully!');
+        })
+        .catch(err => {
+          console.log('Error writing to file:', err);
+        });    
       });
+    }
 }
 
 init();
-
-/**
- * will use parts of code below to handle albums not found.
- */
-// // write albums not found to a txt file
-// const rejectsTxtWriter = createCsvWriter({
-//     path: path.join(__dirname, `../../data-grabber-files/${rejectsTxtFile}`),
-//     // header: ['title']
-// });
-
-// // main function
-// async function main() {
-//     // get access token, then search Spotify for cover art
-//     const spotifyAccessToken = await search.getSpotifyAccessToken();
-//     const coverArtUrl = await search.getSpotifyCoverArt(spotifyAccessToken, albumTitles[index]);
-
-//     // if coverArtUrl is not null, update url in products csv file
-//     if (coverArtUrl !== null) {
-//         const cover_image = coverArtUrl;
-//         const product = {
-//             'Handle': title,
-//             'Title': title,
-//             'Body (HTML)': '',
-//             'Vendor': 'Village Record Club',
-//             'Product Category': 'Media > Music & Sound Recordings > Records & LPs',
-//             'Type': 'album',
-//             'Tags': `${format}, ${label}, ${genre}, ${style}`,
-//             'Published': '',
-//             'Option1 Name': '',
-//             'Option1 Value': '',
-//             'Option2 Name': '',
-//             'Option2 Value': '',
-//             'Option3 Name': '',
-//             'Option3 Value': '',
-//             'Variant SKU': '',
-//             'Variant Grams': '',
-//             'Variant Inventory Tracker': '',
-//             'Variant Inventory Qty': '',
-//             'Variant Inventory Policy': 'deny',
-//             'Variant Fulfillment Service': 'manual',
-//             'Variant Price': '',
-//             'Variant Compare At Price': '',
-//             'Variant Requires Shipping': '',
-//             'Variant Taxable': '',
-//             'Variant Barcode': '',
-//             'Image Src': cover_image,
-//             'Image Position': '',
-//             'Image Alt Text': title,
-//             'Gift Card': '',
-//             'SEO Title': `${title} | Village Record Club`,
-//             'SEO Description': `${title} is available to add to your wishlist.`,
-//             'Google Shopping / Google Product Category': '',
-//             'Google Shopping / Gender': '',
-//             'Google Shopping / Age Group': '',
-//             'Google Shopping / MPN': '',
-//             'Google Shopping / AdWords Grouping': '',
-//             'Google Shopping / AdWords Labels': '',
-//             'Google Shopping / Condition': '',
-//             'Google Shopping / Custom Product': '',
-//             'Google Shopping / Custom Label 0': '',
-//             'Google Shopping / Custom Label 1': '',
-//             'Google Shopping / Custom Label 2': '',
-//             'Google Shopping / Custom Label 3': '',
-//             'Google Shopping / Custom Label 4': '',
-//             'Variant Image': '',
-//             'Variant Weight Unit': '',
-//             'Variant Tax Code': '',
-//             'Cost per item': '',
-//             'Price / International': '',
-//             'Compare At Price / International': '',
-//             'Status': 'Active'
-//         };
-
-//         await csvProductWriter.writeRecords([product])
-//             .then(async () => {
-//                 console.log(`Image src updated in ${productsCsvFile}.`);
-//                 await index++;
-//             })
-//             .catch(err => {
-//                 console.error(`Error updating Image src in ${productsCsvFile}:`, err);
-//             });
-    
-//     } else {
-//         // if spotify image search returns null, save title to rejects txt file
-//         await rejectsTxtWriter.writeRecords([{title: albumTitles[index]}])
-//             .then(async () => {
-//                 console.log(`Album saved to ${rejectsTxtFile}.`);
-//                 await index++;
-//             })
-//             .catch(err => {
-//                 console.error('Error saving album to rejects.txt:', err);
-//             })
-//     }       
-    
-//     if (index < albumTitlesLength) {
-//         setTimeout(main, 2109);
-//     } else {
-//         console.log('Done.');
-//     }
-// }
-
-
